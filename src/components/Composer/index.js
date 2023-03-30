@@ -15,6 +15,7 @@ import Clipboard from '../../libs/Clipboard';
 import withWindowDimensions, {windowDimensionsPropTypes} from '../withWindowDimensions';
 import compose from '../../libs/compose';
 import styles from '../../styles/styles';
+import KeyboardShortcut from '../../libs/KeyboardShortcut';
 
 const propTypes = {
     /** Maximum number of lines in the text input */
@@ -132,6 +133,7 @@ class Composer extends React.Component {
         };
 
         this.paste = this.paste.bind(this);
+        this.handleKeyPress = this.handleKeyPress.bind(this);
         this.handlePaste = this.handlePaste.bind(this);
         this.handlePastedHTML = this.handlePastedHTML.bind(this);
         this.handleWheel = this.handleWheel.bind(this);
@@ -188,6 +190,14 @@ class Composer extends React.Component {
 
         this.textInput.removeEventListener('paste', this.handlePaste);
         this.textInput.removeEventListener('wheel', this.handleWheel);
+    }
+
+    // Prevent onKeyPress from being triggered if the Enter key is pressed while text is being composed
+    handleKeyPress(e) {
+        if (!this.props.onKeyPress || KeyboardShortcut.isEnterWhileComposition(e)) {
+            return;
+        }
+        this.props.onKeyPress(e);
     }
 
     /**
@@ -368,6 +378,7 @@ class Composer extends React.Component {
                 selection={this.state.selection}
                 onChange={this.shouldCallUpdateNumberOfLines}
                 onSelectionChange={this.onSelectionChange}
+                onKeyPress={this.handleKeyPress}
                 style={[
                     propStyles,
 

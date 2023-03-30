@@ -3,6 +3,7 @@ import lodashGet from 'lodash/get';
 import Str from 'expensify-common/lib/str';
 import getOperatingSystem from '../getOperatingSystem';
 import CONST from '../../CONST';
+import * as Browser from '../Browser';
 
 // Handlers for the various keyboard listeners we set up
 const eventHandlers = {};
@@ -61,12 +62,27 @@ function getDisplayName(key, modifiers) {
 }
 
 /**
+ * Check if the Enter key was pressed during IME confirmation (i.e. while the text is being composed).
+ * See {@link https://en.wikipedia.org/wiki/Input_method}
+ * @param {Event} event
+ * @returns {boolean}
+ */
+const isEnterWhileComposition = (event) => {
+    // On Safari, isComposing returns false on Enter keypress event even for IME confirmation. Although keyCode is deprecated,
+    // reading keyCode is the only way available to distinguish Enter keypress event for IME confirmation.
+    if (CONST.BROWSER.SAFARI === Browser.getBrowser()) {
+        return event.keyCode === 229;
+    }
+    return event.key === CONST.KEYBOARD_SHORTCUTS.ENTER.shortcutKey && event.nativeEvent && event.nativeEvent.isComposing;
+};
+
+/**
  * Checks if an event for that key is configured and if so, runs it.
  * @param {Event} event
  * @private
  */
 function bindHandlerToKeydownEvent(event) {
-    if (!(event instanceof KeyboardEvent)) {
+    if (!(event instanceof KeyboardEvent) || isEnterWhileComposition(event)) {
         return;
     }
 
@@ -200,6 +216,7 @@ function subscribe(key, callback, descriptionKey, modifiers = 'shift', captureOn
 const KeyboardShortcut = {
     subscribe,
     getDocumentedShortcuts,
+    isEnterWhileComposition,
 };
 
 export default KeyboardShortcut;

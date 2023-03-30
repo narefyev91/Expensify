@@ -2,6 +2,8 @@ import React from 'react';
 import lodashGet from 'lodash/get';
 import {View} from 'react-native';
 import * as formSubmitPropTypes from './formSubmitPropTypes';
+import KeyboardShortcut from '../../libs/KeyboardShortcut';
+import CONST from '../../CONST';
 
 // This is a wrapper component to handle the ENTER key press, and submit the form.
 class FormSubmit extends React.Component {
@@ -17,8 +19,8 @@ class FormSubmit extends React.Component {
      */
 
     submitForm(event) {
-        // ENTER is pressed with modifier key, do not submit the form
-        if (event.shiftKey || event.key !== 'Enter') {
+        // ENTER is pressed with modifier key or during text composition, do not submit the form
+        if (event.shiftKey || event.key !== CONST.KEYBOARD_SHORTCUTS.ENTER.shortcutKey || KeyboardShortcut.isEnterWhileComposition(event)) {
             return;
         }
 
