@@ -5078,12 +5078,13 @@ function shouldDisableThread(reportAction: OnyxEntry<ReportAction>, reportID: st
     const isReportPreviewAction = ReportActionsUtils.isReportPreviewAction(reportAction);
     const isIOUAction = ReportActionsUtils.isMoneyRequestAction(reportAction);
     const isWhisperAction = ReportActionsUtils.isWhisperAction(reportAction);
+    const isJoinAction = ReportActionsUtils.isActionableJoinRequest(reportAction);
 
     return (
         CONST.REPORT.ACTIONS.THREAD_DISABLED.some((action: string) => action === reportAction?.actionName) ||
         isSplitBillAction ||
         (isDeletedAction && !reportAction?.childVisibleActionCount) ||
-        (isWhisperAction && !isReportPreviewAction && !isIOUAction) ||
+        ((isWhisperAction || isJoinAction) && !isReportPreviewAction && !isIOUAction) ||
         isThreadFirstChat(reportAction, reportID)
     );
 }
