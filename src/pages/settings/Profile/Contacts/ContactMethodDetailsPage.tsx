@@ -141,6 +141,9 @@ function ContactMethodDetailsPage({route}: ContactMethodDetailsPageProps) {
         User.deleteContactMethod(contactMethod, loginList ?? {});
     }, [contactMethod, loginList, toggleDeleteModal]);
 
+    console.log('loginData');
+    console.log(loginData);
+
     useEffect(() => {
         if (isEmptyObject(loginData)) {
             return;
@@ -225,7 +228,7 @@ function ContactMethodDetailsPage({route}: ContactMethodDetailsPageProps) {
                     />
                 )}
 
-                {!loginData.validatedDate && !isFailedAddContactMethod && (
+                {!isFailedAddContactMethod && (
                     <View style={[themeStyles.ph5, themeStyles.mt3, themeStyles.mb7]}>
                         <DotIndicatorMessage
                             type="success"
